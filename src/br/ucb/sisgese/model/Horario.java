@@ -2,6 +2,7 @@ package br.ucb.sisgese.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -31,10 +32,10 @@ public class Horario implements Serializable {
     private Long id;
     @Column(name = "entrada")
     @Temporal(TemporalType.TIME)
-    private Calendar entrada;
+    private Date entrada;
     @Column(name = "saida")
     @Temporal(TemporalType.TIME)
-    private Calendar saida;
+    private Date saida;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "horario")
     private List<Vaga> vagaList;
 
@@ -45,7 +46,7 @@ public class Horario implements Serializable {
         this.id = id;
     }
 
-    public Horario(Long id, Calendar entrada, Calendar saida) {
+    public Horario(Long id, Date entrada, Date saida) {
         this.id = id;
         this.entrada = entrada;
         this.saida = saida;
@@ -59,19 +60,19 @@ public class Horario implements Serializable {
         this.id = id;
     }
 
-    public Calendar getEntrada() {
+    public Date getEntrada() {
         return entrada;
     }
 
-    public void setEntrada(Calendar entrada) {
+    public void setEntrada(Date entrada) {
         this.entrada = entrada;
     }
 
-    public Calendar getSaida() {
+    public Date getSaida() {
         return saida;
     }
 
-    public void setSaida(Calendar saida) {
+    public void setSaida(Date saida) {
         this.saida = saida;
     }
 
