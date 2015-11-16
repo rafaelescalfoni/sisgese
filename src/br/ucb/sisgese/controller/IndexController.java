@@ -28,7 +28,9 @@ public class IndexController {
 	
 	@Get("/")
 	public void login() {
-		
+		if(daoFactory.getUsuarioDAO().list().isEmpty()) {
+			primeiroAcesso();
+		}
 	}
 	
 	public void login(String mensagemErro) {
@@ -53,5 +55,12 @@ public class IndexController {
 	
 	public void home() {
 		
+	}
+	
+	private void primeiroAcesso() {
+		Usuario usuario = new Usuario();
+		usuario.setMatricula("223311");
+		usuario.setSenha("98765");
+		daoFactory.getUsuarioDAO().add(usuario);
 	}
 }

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.ucb.sisgese.components.TipoRecrutamentoEnum;
 
 @Entity
 @Table(name = "solicitacao")
@@ -39,7 +40,6 @@ public class Solicitacao implements Serializable {
     @Column(name = "data_fim")
     @Temporal(TemporalType.DATE)
     private Calendar dataFim;
-    @Basic(optional = false)
     @Column(name = "tipo_recrutamento")
     private String tipoRecrutamento;
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
@@ -61,10 +61,10 @@ public class Solicitacao implements Serializable {
         this.id = id;
     }
 
-    public Solicitacao(Long id, Calendar dataCriacao, String tipoRecrutamento) {
+    public Solicitacao(Long id, Calendar dataCriacao, TipoRecrutamentoEnum tipoRecrutamento) {
         this.id = id;
         this.dataCriacao = dataCriacao;
-        this.tipoRecrutamento = tipoRecrutamento;
+        this.tipoRecrutamento = tipoRecrutamento.getNome();
     }
 
     public Long getId() {
@@ -95,8 +95,8 @@ public class Solicitacao implements Serializable {
         return tipoRecrutamento;
     }
 
-    public void setTipoRecrutamento(String tipoRecrutamento) {
-        this.tipoRecrutamento = tipoRecrutamento;
+    public void setTipoRecrutamento(TipoRecrutamentoEnum tipoRecrutamentoEnum) {
+        this.tipoRecrutamento = tipoRecrutamentoEnum.getNome();
     }
 
     public Usuario getUsuario() {

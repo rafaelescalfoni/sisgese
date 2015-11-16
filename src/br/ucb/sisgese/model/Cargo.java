@@ -2,6 +2,7 @@ package br.ucb.sisgese.model;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import br.ucb.sisgese.components.NivelInstrucaoEnum;
 
 @Entity
 @Table(name = "cargo")
@@ -32,6 +35,8 @@ public class Cargo implements Serializable {
     private String nome;
     @Column(name = "descricao")
     private String descricao;
+    @Column(name = "nivel_instrucao")
+    private String nivelInstrucao;
     @JoinTable(name = "cargo_tem_competencia", joinColumns = {
         @JoinColumn(name = "cargo_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "competencia_id", referencedColumnName = "id")})
@@ -42,6 +47,8 @@ public class Cargo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargo")
     private List<Funcionario> funcionarioList;
 
+    
+    
     public Cargo() {
     }
 
@@ -78,7 +85,15 @@ public class Cargo implements Serializable {
         this.descricao = descricao;
     }
 
-    public List<Competencia> getCompetenciaList() {
+    public String getNivelInstrucao() {
+		return nivelInstrucao;
+	}
+
+	public void setNivelInstrucao(NivelInstrucaoEnum nivelInstrucaoEnum) {
+		this.nivelInstrucao = nivelInstrucaoEnum.getNome();
+	}
+
+	public List<Competencia> getCompetenciaList() {
         return competenciaList;
     }
 
