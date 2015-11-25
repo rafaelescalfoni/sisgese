@@ -1,7 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,10 +17,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "pendencia")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Pendencia.findAll", query = "SELECT p FROM Pendencia p"),
     @NamedQuery(name = "Pendencia.findById", query = "SELECT p FROM Pendencia p WHERE p.id = :id"),
     @NamedQuery(name = "Pendencia.findByNome", query = "SELECT p FROM Pendencia p WHERE p.nome = :nome"),
     @NamedQuery(name = "Pendencia.findByDescricao", query = "SELECT p FROM Pendencia p WHERE p.descricao = :descricao")})
@@ -22,14 +36,16 @@ public class Pendencia implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
     @Column(name = "descricao")
     private String descricao;
-    @ManyToMany(mappedBy = "pendenciaList")
-    private List<CandidatoSelecionado> candidatoSelecionadoList;
+    @ManyToMany(mappedBy = "pendenciaCollection")
+    private Collection<CandidatoSelecionado> candidatoSelecionadoCollection;
 
     public Pendencia() {
     }
@@ -67,12 +83,13 @@ public class Pendencia implements Serializable {
         this.descricao = descricao;
     }
 
-    public List<CandidatoSelecionado> getCandidatoSelecionadoList() {
-        return candidatoSelecionadoList;
+    @XmlTransient
+    public Collection<CandidatoSelecionado> getCandidatoSelecionadoCollection() {
+        return candidatoSelecionadoCollection;
     }
 
-    public void setCandidatoSelecionadoList(List<CandidatoSelecionado> candidatoSelecionadoList) {
-        this.candidatoSelecionadoList = candidatoSelecionadoList;
+    public void setCandidatoSelecionadoCollection(Collection<CandidatoSelecionado> candidatoSelecionadoCollection) {
+        this.candidatoSelecionadoCollection = candidatoSelecionadoCollection;
     }
 
     @Override
@@ -97,7 +114,7 @@ public class Pendencia implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Pendencia[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Pendencia[ id=" + id + " ]";
     }
     
 }

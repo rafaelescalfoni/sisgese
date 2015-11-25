@@ -1,9 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.List;
-
+import java.util.Collection;
+import java.util.Date;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,12 +23,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import br.ucb.sisgese.components.TipoRecrutamentoEnum;
-
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "solicitacao")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Solicitacao.findAll", query = "SELECT s FROM Solicitacao s"),
     @NamedQuery(name = "Solicitacao.findById", query = "SELECT s FROM Solicitacao s WHERE s.id = :id"),
     @NamedQuery(name = "Solicitacao.findByDataCriacao", query = "SELECT s FROM Solicitacao s WHERE s.dataCriacao = :dataCriacao"),
     @NamedQuery(name = "Solicitacao.findByDataFim", query = "SELECT s FROM Solicitacao s WHERE s.dataFim = :dataFim"),
@@ -32,27 +43,30 @@ public class Solicitacao implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "data_criacao")
     @Temporal(TemporalType.DATE)
-    private Calendar dataCriacao;
+    private Date dataCriacao;
     @Column(name = "data_fim")
     @Temporal(TemporalType.DATE)
-    private Calendar dataFim;
+    private Date dataFim;
+    @Basic(optional = false)
     @Column(name = "tipo_recrutamento")
     private String tipoRecrutamento;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitacaoId")
+    private Collection<Vaga> vagaCollection;
     @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Usuario usuario;
-    @JoinColumn(name = "motivo_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Motivo motivo;
+    private Usuario usuarioId;
     @JoinColumn(name = "setor_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Setor setor;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "solicitacao")
-    private List<Vaga> vagaList;
+    private Setor setorId;
+    @JoinColumn(name = "motivo_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Motivo motivoId;
 
     public Solicitacao() {
     }
@@ -61,10 +75,10 @@ public class Solicitacao implements Serializable {
         this.id = id;
     }
 
-    public Solicitacao(Long id, Calendar dataCriacao, TipoRecrutamentoEnum tipoRecrutamento) {
+    public Solicitacao(Long id, Date dataCriacao, String tipoRecrutamento) {
         this.id = id;
         this.dataCriacao = dataCriacao;
-        this.tipoRecrutamento = tipoRecrutamento.getNome();
+        this.tipoRecrutamento = tipoRecrutamento;
     }
 
     public Long getId() {
@@ -75,19 +89,19 @@ public class Solicitacao implements Serializable {
         this.id = id;
     }
 
-    public Calendar getDataCriacao() {
+    public Date getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Calendar dataCriacao) {
+    public void setDataCriacao(Date dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
-    public Calendar getDataFim() {
+    public Date getDataFim() {
         return dataFim;
     }
 
-    public void setDataFim(Calendar dataFim) {
+    public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
     }
 
@@ -95,40 +109,41 @@ public class Solicitacao implements Serializable {
         return tipoRecrutamento;
     }
 
-    public void setTipoRecrutamento(TipoRecrutamentoEnum tipoRecrutamentoEnum) {
-        this.tipoRecrutamento = tipoRecrutamentoEnum.getNome();
+    public void setTipoRecrutamento(String tipoRecrutamento) {
+        this.tipoRecrutamento = tipoRecrutamento;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    @XmlTransient
+    public Collection<Vaga> getVagaCollection() {
+        return vagaCollection;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setVagaCollection(Collection<Vaga> vagaCollection) {
+        this.vagaCollection = vagaCollection;
     }
 
-    public Motivo getMotivo() {
-        return motivo;
+    public Usuario getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setMotivo(Motivo motivo) {
-        this.motivo = motivo;
+    public void setUsuarioId(Usuario usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
-    public Setor getSetor() {
-        return setor;
+    public Setor getSetorId() {
+        return setorId;
     }
 
-    public void setSetor(Setor setor) {
-        this.setor = setor;
+    public void setSetorId(Setor setorId) {
+        this.setorId = setorId;
     }
 
-    public List<Vaga> getVagaList() {
-        return vagaList;
+    public Motivo getMotivoId() {
+        return motivoId;
     }
 
-    public void setVagaList(List<Vaga> vagaList) {
-        this.vagaList = vagaList;
+    public void setMotivoId(Motivo motivoId) {
+        this.motivoId = motivoId;
     }
 
     @Override
@@ -153,7 +168,7 @@ public class Solicitacao implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Solicitacao[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Solicitacao[ id=" + id + " ]";
     }
     
 }

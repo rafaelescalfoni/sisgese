@@ -1,7 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,14 +18,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author rafaelescalfoni
+ * @author claudio.souza
  */
 @Entity
 @Table(name = "pessoa")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Pessoa.findAll", query = "SELECT p FROM Pessoa p"),
     @NamedQuery(name = "Pessoa.findById", query = "SELECT p FROM Pessoa p WHERE p.id = :id"),
     @NamedQuery(name = "Pessoa.findByNome", query = "SELECT p FROM Pessoa p WHERE p.nome = :nome"),
     @NamedQuery(name = "Pessoa.findByCpf", query = "SELECT p FROM Pessoa p WHERE p.cpf = :cpf")})
@@ -28,6 +37,7 @@ public class Pessoa implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
@@ -36,8 +46,8 @@ public class Pessoa implements Serializable {
     @Basic(optional = false)
     @Column(name = "cpf")
     private String cpf;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "candidato")
-    private List<ProcessoSeletivo> processoSeletivoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pessoaId")
+    private Collection<ProcessoSeletivo> processoSeletivoCollection;
 
     public Pessoa() {
     }
@@ -76,12 +86,13 @@ public class Pessoa implements Serializable {
         this.cpf = cpf;
     }
 
-    public List<ProcessoSeletivo> getProcessoSeletivoList() {
-        return processoSeletivoList;
+    @XmlTransient
+    public Collection<ProcessoSeletivo> getProcessoSeletivoCollection() {
+        return processoSeletivoCollection;
     }
 
-    public void setProcessoSeletivoList(List<ProcessoSeletivo> processoSeletivoList) {
-        this.processoSeletivoList = processoSeletivoList;
+    public void setProcessoSeletivoCollection(Collection<ProcessoSeletivo> processoSeletivoCollection) {
+        this.processoSeletivoCollection = processoSeletivoCollection;
     }
 
     @Override
@@ -106,7 +117,7 @@ public class Pessoa implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Pessoa[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Pessoa[ id=" + id + " ]";
     }
     
 }

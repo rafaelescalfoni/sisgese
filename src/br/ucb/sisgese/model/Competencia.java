@@ -1,7 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +17,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "competencia")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Competencia.findAll", query = "SELECT c FROM Competencia c"),
     @NamedQuery(name = "Competencia.findById", query = "SELECT c FROM Competencia c WHERE c.id = :id"),
     @NamedQuery(name = "Competencia.findByNome", query = "SELECT c FROM Competencia c WHERE c.nome = :nome"),
     @NamedQuery(name = "Competencia.findByDescricao", query = "SELECT c FROM Competencia c WHERE c.descricao = :descricao"),
@@ -24,6 +37,7 @@ public class Competencia implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
@@ -33,9 +47,9 @@ public class Competencia implements Serializable {
     private String descricao;
     @Basic(optional = false)
     @Column(name = "obrigatoria")
-    private boolean obrigatoria;
-    @ManyToMany(mappedBy = "competenciaList")
-    private List<Cargo> cargoList;
+    private short obrigatoria;
+    @ManyToMany(mappedBy = "competenciaCollection")
+    private Collection<Cargo> cargoCollection;
 
     public Competencia() {
     }
@@ -44,7 +58,7 @@ public class Competencia implements Serializable {
         this.id = id;
     }
 
-    public Competencia(Long id, String nome, boolean obrigatoria) {
+    public Competencia(Long id, String nome, short obrigatoria) {
         this.id = id;
         this.nome = nome;
         this.obrigatoria = obrigatoria;
@@ -74,20 +88,21 @@ public class Competencia implements Serializable {
         this.descricao = descricao;
     }
 
-    public boolean isObrigatoria() {
+    public short getObrigatoria() {
         return obrigatoria;
     }
 
-    public void getObrigatoria(boolean obrigatoria) {
+    public void setObrigatoria(short obrigatoria) {
         this.obrigatoria = obrigatoria;
     }
 
-    public List<Cargo> getCargoList() {
-        return cargoList;
+    @XmlTransient
+    public Collection<Cargo> getCargoCollection() {
+        return cargoCollection;
     }
 
-    public void setCargoList(List<Cargo> cargoList) {
-        this.cargoList = cargoList;
+    public void setCargoCollection(Collection<Cargo> cargoCollection) {
+        this.cargoCollection = cargoCollection;
     }
 
     @Override
@@ -112,7 +127,7 @@ public class Competencia implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Competencia[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Competencia[ id=" + id + " ]";
     }
     
 }

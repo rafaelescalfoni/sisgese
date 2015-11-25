@@ -1,8 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,11 +18,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "funcionario")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Funcionario.findAll", query = "SELECT f FROM Funcionario f"),
     @NamedQuery(name = "Funcionario.findByMatricula", query = "SELECT f FROM Funcionario f WHERE f.matricula = :matricula"),
     @NamedQuery(name = "Funcionario.findByNome", query = "SELECT f FROM Funcionario f WHERE f.nome = :nome"),
     @NamedQuery(name = "Funcionario.findByValorHora", query = "SELECT f FROM Funcionario f WHERE f.valorHora = :valorHora"),
@@ -34,7 +45,6 @@ public class Funcionario implements Serializable {
     @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
-    @Min(value=0)
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "valor_hora")
     private Double valorHora;
@@ -44,13 +54,13 @@ public class Funcionario implements Serializable {
     private String telefone;
     @Column(name = "email")
     private String email;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "funcionario")
-    private List<Setor> setorList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "avaliador")
-    private List<Avaliacao> avaliacaoList;
     @JoinColumn(name = "cargo_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Cargo cargo;
+    private Cargo cargoId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "avaliadorId")
+    private Collection<Avaliacao> avaliacaoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "funcionarioId")
+    private Collection<Setor> setorCollection;
 
     public Funcionario() {
     }
@@ -112,28 +122,30 @@ public class Funcionario implements Serializable {
         this.email = email;
     }
 
-    public List<Setor> getSetorList() {
-        return setorList;
+    public Cargo getCargoId() {
+        return cargoId;
     }
 
-    public void setSetorList(List<Setor> setorList) {
-        this.setorList = setorList;
+    public void setCargoId(Cargo cargoId) {
+        this.cargoId = cargoId;
     }
 
-    public List<Avaliacao> getAvaliacaoList() {
-        return avaliacaoList;
+    @XmlTransient
+    public Collection<Avaliacao> getAvaliacaoCollection() {
+        return avaliacaoCollection;
     }
 
-    public void setAvaliacaoList(List<Avaliacao> avaliacaoList) {
-        this.avaliacaoList = avaliacaoList;
+    public void setAvaliacaoCollection(Collection<Avaliacao> avaliacaoCollection) {
+        this.avaliacaoCollection = avaliacaoCollection;
     }
 
-    public Cargo getCargo() {
-        return cargo;
+    @XmlTransient
+    public Collection<Setor> getSetorCollection() {
+        return setorCollection;
     }
 
-    public void setCargo(Cargo cargo) {
-        this.cargo = cargo;
+    public void setSetorCollection(Collection<Setor> setorCollection) {
+        this.setorCollection = setorCollection;
     }
 
     @Override
@@ -158,7 +170,7 @@ public class Funcionario implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Funcionario[ matricula=" + matricula + " ]";
+        return "br.ucb.sisgese.model.Funcionario[ matricula=" + matricula + " ]";
     }
     
 }

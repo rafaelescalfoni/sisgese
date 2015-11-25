@@ -1,8 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-
+import java.util.Date;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,10 +20,17 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "avaliacao")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Avaliacao.findAll", query = "SELECT a FROM Avaliacao a"),
     @NamedQuery(name = "Avaliacao.findById", query = "SELECT a FROM Avaliacao a WHERE a.id = :id"),
     @NamedQuery(name = "Avaliacao.findByData", query = "SELECT a FROM Avaliacao a WHERE a.data = :data"),
     @NamedQuery(name = "Avaliacao.findByNota", query = "SELECT a FROM Avaliacao a WHERE a.nota = :nota"),
@@ -27,24 +39,27 @@ public class Avaliacao implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "data")
     @Temporal(TemporalType.DATE)
-    private Calendar data;
+    private Date data;
+    @Basic(optional = false)
     @Column(name = "nota")
     private float nota;
     @Column(name = "observacao")
     private String observacao;
-    @JoinColumn(name = "processo_seletivo_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private ProcessoSeletivo processoSeletivo;
     @JoinColumn(name = "tipo_avaliacao_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private TipoAvaliacao tipoAvaliacao;
+    private TipoAvaliacao tipoAvaliacaoId;
+    @JoinColumn(name = "processo_seletivo_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private ProcessoSeletivo processoSeletivoId;
     @JoinColumn(name = "avaliador_id", referencedColumnName = "matricula")
     @ManyToOne(optional = false)
-    private Funcionario avaliador;
+    private Funcionario avaliadorId;
 
     public Avaliacao() {
     }
@@ -53,7 +68,7 @@ public class Avaliacao implements Serializable {
         this.id = id;
     }
 
-    public Avaliacao(Long id, Calendar data, float nota) {
+    public Avaliacao(Long id, Date data, float nota) {
         this.id = id;
         this.data = data;
         this.nota = nota;
@@ -67,11 +82,11 @@ public class Avaliacao implements Serializable {
         this.id = id;
     }
 
-    public Calendar getData() {
+    public Date getData() {
         return data;
     }
 
-    public void setData(Calendar data) {
+    public void setData(Date data) {
         this.data = data;
     }
 
@@ -91,28 +106,28 @@ public class Avaliacao implements Serializable {
         this.observacao = observacao;
     }
 
-    public ProcessoSeletivo getProcessoSeletivo() {
-        return processoSeletivo;
+    public TipoAvaliacao getTipoAvaliacaoId() {
+        return tipoAvaliacaoId;
     }
 
-    public void setProcessoSeletivo(ProcessoSeletivo processoSeletivo) {
-        this.processoSeletivo = processoSeletivo;
+    public void setTipoAvaliacaoId(TipoAvaliacao tipoAvaliacaoId) {
+        this.tipoAvaliacaoId = tipoAvaliacaoId;
     }
 
-    public TipoAvaliacao getTipoAvaliacao() {
-        return tipoAvaliacao;
+    public ProcessoSeletivo getProcessoSeletivoId() {
+        return processoSeletivoId;
     }
 
-    public void setTipoAvaliacao(TipoAvaliacao tipoAvaliacao) {
-        this.tipoAvaliacao = tipoAvaliacao;
+    public void setProcessoSeletivoId(ProcessoSeletivo processoSeletivoId) {
+        this.processoSeletivoId = processoSeletivoId;
     }
 
-    public Funcionario getAvaliador() {
-        return avaliador;
+    public Funcionario getAvaliadorId() {
+        return avaliadorId;
     }
 
-    public void setAvaliador(Funcionario avaliador) {
-        this.avaliador = avaliador;
+    public void setAvaliadorId(Funcionario avaliadorId) {
+        this.avaliadorId = avaliadorId;
     }
 
     @Override
@@ -137,7 +152,7 @@ public class Avaliacao implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Avaliacao[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Avaliacao[ id=" + id + " ]";
     }
     
 }

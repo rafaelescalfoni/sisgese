@@ -1,7 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +18,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "tipo_avaliacao")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "TipoAvaliacao.findAll", query = "SELECT t FROM TipoAvaliacao t"),
     @NamedQuery(name = "TipoAvaliacao.findById", query = "SELECT t FROM TipoAvaliacao t WHERE t.id = :id"),
     @NamedQuery(name = "TipoAvaliacao.findByNome", query = "SELECT t FROM TipoAvaliacao t WHERE t.nome = :nome"),
     @NamedQuery(name = "TipoAvaliacao.findByDuracao", query = "SELECT t FROM TipoAvaliacao t WHERE t.duracao = :duracao"),
@@ -24,16 +38,20 @@ public class TipoAvaliacao implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
+    @Basic(optional = false)
     @Column(name = "duracao")
     private int duracao;
+    @Basic(optional = false)
     @Column(name = "descricao")
     private String descricao;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAvaliacao")
-    private List<Avaliacao> avaliacaoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tipoAvaliacaoId")
+    private Collection<Avaliacao> avaliacaoCollection;
 
     public TipoAvaliacao() {
     }
@@ -81,12 +99,13 @@ public class TipoAvaliacao implements Serializable {
         this.descricao = descricao;
     }
 
-    public List<Avaliacao> getAvaliacaoList() {
-        return avaliacaoList;
+    @XmlTransient
+    public Collection<Avaliacao> getAvaliacaoCollection() {
+        return avaliacaoCollection;
     }
 
-    public void setAvaliacaoList(List<Avaliacao> avaliacaoList) {
-        this.avaliacaoList = avaliacaoList;
+    public void setAvaliacaoCollection(Collection<Avaliacao> avaliacaoCollection) {
+        this.avaliacaoCollection = avaliacaoCollection;
     }
 
     @Override
@@ -111,7 +130,7 @@ public class TipoAvaliacao implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.TipoAvaliacao[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.TipoAvaliacao[ id=" + id + " ]";
     }
     
 }

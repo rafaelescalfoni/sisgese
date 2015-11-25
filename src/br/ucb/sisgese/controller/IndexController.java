@@ -28,9 +28,7 @@ public class IndexController {
 	
 	@Get("/")
 	public void login() {
-		if(daoFactory.getUsuarioDAO().list().isEmpty()) {
-			primeiroAcesso();
-		}
+		
 	}
 	
 	public void login(String mensagemErro) {
@@ -49,18 +47,11 @@ public class IndexController {
 			userSession.setUsuario(usuarioEncontrado);
 			result.redirectTo(this).home();
 		} else {
-			result.redirectTo(this).login("Matrícula ou senha invalida");
+			result.redirectTo(this).login("Matricula ou senha invalida");
 		}
 	}
 	
 	public void home() {
 		
-	}
-	
-	private void primeiroAcesso() {
-		Usuario usuario = new Usuario();
-		usuario.setMatricula("223311");
-		usuario.setSenha("98765");
-		daoFactory.getUsuarioDAO().add(usuario);
 	}
 }

@@ -1,7 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +18,16 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "motivo")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Motivo.findAll", query = "SELECT m FROM Motivo m"),
     @NamedQuery(name = "Motivo.findById", query = "SELECT m FROM Motivo m WHERE m.id = :id"),
@@ -23,14 +37,16 @@ public class Motivo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
     @Column(name = "descricao")
     private String descricao;
-    @OneToMany(mappedBy = "motivo")
-    private List<Solicitacao> solicitacaoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "motivoId")
+    private Collection<Solicitacao> solicitacaoCollection;
 
     public Motivo() {
     }
@@ -68,12 +84,13 @@ public class Motivo implements Serializable {
         this.descricao = descricao;
     }
 
-    public List<Solicitacao> getSolicitacaoList() {
-        return solicitacaoList;
+    @XmlTransient
+    public Collection<Solicitacao> getSolicitacaoCollection() {
+        return solicitacaoCollection;
     }
 
-    public void setSolicitacaoList(List<Solicitacao> solicitacaoList) {
-        this.solicitacaoList = solicitacaoList;
+    public void setSolicitacaoCollection(Collection<Solicitacao> solicitacaoCollection) {
+        this.solicitacaoCollection = solicitacaoCollection;
     }
 
     @Override
@@ -98,7 +115,7 @@ public class Motivo implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Motivo[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Motivo[ id=" + id + " ]";
     }
     
 }

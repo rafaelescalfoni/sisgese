@@ -34,7 +34,7 @@
 
 	<script  language="JavaScript">
 
-						document.write("<font color='red' size='2' face='arial'>")
+						document.write("<font color='black' size='2' face='arial'>")
 						var mydate=new Date()
 						var year=mydate.getYear()
 						if (year<2000)
@@ -56,11 +56,14 @@
 		
 <br>
 			<br>
+			<c:if test="${userSession.logged}">	Matricula: ${userSession.usuario.matricula }<br>
+												Usuario: ${userSession.usuario.nome }
+			</c:if>
 			<br>
 		<!-- Aqui começa o conteudo -->
 		<div class="wrapper" role="main">
 			<div class="container-fluid">
-			<h4 align = "center">SISTEMA DE GERENCIAMENTO PARA AUTOMATIZAÇÃO NO PROCESSO DE EMISSÃO DE SE</h4>
+			<h4 align = "center">SISTEMA DE GERENCIAMENTO PARA EMISSÃO DE SOLICITAÇÃO DE EMPREGADO</h4>
 				<div class="row col-md-6 col-md-offset-3">
 					<div id="conteudo" >
 						
@@ -72,43 +75,44 @@
 							<div class="panel-heading">
 							<div class="panel-body">
 								<div class="container">
-									<div class="col-lg-4 col-lg-offset-1  panel-title">Escolha  uma opção e acesse o sistema</div>
+									<div class="col-lg-4 col-lg-offset-1  panel-title">Escolha  uma opção e acesse o sistema:</div>
 											<div style="padding-top:20px" class="panel-body" >
 												
 													
 														
 														<div class="form-group" style="padding-left:110px">
+															
 															<br><br>
+															<c:if test="${userSession.usuario.perfil ne 'usuario_adm'}">
 															<input class="label label-success" id="n_se" >
 															<label for="nova_se">Solicitação de Empregado(SE)</label>
-															<span><a class="label label-success" href="<c:url value="/formulario/formulario"/>" >Nova!</a></span>
+															<span><a class="label label-success" href="<c:url value="/solicitacao/formulario"/>" >Nova!</a></span>
+															</c:if>
+															<br><br>
+															
+															<input class="label label-primary" id="del_se">
+															<label for="excluir_se">Consultar Solicitação Empregados(SE)</label>
+															<span><a class="label label-primary" href="<c:url value="/solicitacao/lista"/>" >Consultar!</a></span>
 															<br><br>
 															<input class="label label-warning"  id="rel_se"  >
 															<label for="relatorio_se">Relátorios Solicitação Empregados(SE)</label>
 															<span><a class="label label-warning" href="<c:url value="/telaRelatorio/tela_relatorio"/>" >Gerar!</a></span>
 															<br><br>
-															<input class="label label-default"  id="ed_se">
-															<label for="editar_se">Editar Solicitação Empregados(SE)</label>
-															<span><a class="label label-default" href="<c:url value="/telaMotivoSolicitacao/motivo_solicitacao"/>" >Editar!</a></span>
-  															<br><br>
-  															<input class="label label-danger" id="del_se">
-															<label for="excluir_se">Excluir Solicitação Empregados(SE)</label>
-															<span><a class="label label-danger" href="<c:url value="/telaMotivoSolicitacao/motivo_solicitacao"/>" >Excluir!</a></span>
+															<c:if test="${userSession.usuario.perfil eq 'administrador'}">
+															<input class="label label-danger" id="del_se">
+															<label for="excluir_se">Cadastro de Usuario</label>
+															<span><a class="label label-danger" href="<c:url value="/usuario/lista"/>">Usuario</a></span>
+															</c:if>
+															
+														
 														</div>
-														
-														
-												
-														<!--  <div align="center" class="col-lg-8 col-lg-offset-2 col-lg-2 ">
-														<input type="submit" id="btn-acessar" class="btn btn-lg btn-info btn-block" value="Acessar">
-														</div>-->
-														
 												</form>
 										</div>
 										
 									</div><!-- Fim contener-->
 								</div><!--fim panel-body -->
 								
-								<a href="<c:url value="/login/login"/>"><span class="glyphicon glyphicon-off"></span>&nbspSair</a>
+								<a href="<c:url value="/index/login"/>"><span class="glyphicon glyphicon-off"></span>&nbspSair</a>
 								
 							</div>
 							

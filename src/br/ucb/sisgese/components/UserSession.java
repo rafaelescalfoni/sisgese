@@ -31,7 +31,7 @@ public class UserSession implements Serializable {
 
 	@Override
 	public String toString(){
-		return "UserSession [usuario.matricula="+ usuario+"]";
+		return "UserSession [usuario.matricula="+ usuario+"]+ [usuario.nome="+ usuario+"] ";
 		
 	}
 

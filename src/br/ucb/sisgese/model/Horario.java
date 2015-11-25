@@ -1,9 +1,14 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,10 +21,18 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "horario")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Horario.findAll", query = "SELECT h FROM Horario h"),
     @NamedQuery(name = "Horario.findById", query = "SELECT h FROM Horario h WHERE h.id = :id"),
     @NamedQuery(name = "Horario.findByEntrada", query = "SELECT h FROM Horario h WHERE h.entrada = :entrada"),
     @NamedQuery(name = "Horario.findBySaida", query = "SELECT h FROM Horario h WHERE h.saida = :saida")})
@@ -27,16 +40,19 @@ public class Horario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "entrada")
     @Temporal(TemporalType.TIME)
     private Date entrada;
+    @Basic(optional = false)
     @Column(name = "saida")
     @Temporal(TemporalType.TIME)
     private Date saida;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "horario")
-    private List<Vaga> vagaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "horarioId")
+    private Collection<Vaga> vagaCollection;
 
     public Horario() {
     }
@@ -75,12 +91,13 @@ public class Horario implements Serializable {
         this.saida = saida;
     }
 
-    public List<Vaga> getVagaList() {
-        return vagaList;
+    @XmlTransient
+    public Collection<Vaga> getVagaCollection() {
+        return vagaCollection;
     }
 
-    public void setVagaList(List<Vaga> vagaList) {
-        this.vagaList = vagaList;
+    public void setVagaCollection(Collection<Vaga> vagaCollection) {
+        this.vagaCollection = vagaCollection;
     }
 
     @Override
@@ -105,7 +122,7 @@ public class Horario implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Horario[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Horario[ id=" + id + " ]";
     }
     
 }

@@ -1,7 +1,12 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,20 +20,25 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author rafaelescalfoni
+ * @author claudio.souza
  */
 @Entity
 @Table(name = "setor")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Setor.findAll", query = "SELECT s FROM Setor s"),
     @NamedQuery(name = "Setor.findById", query = "SELECT s FROM Setor s WHERE s.id = :id"),
     @NamedQuery(name = "Setor.findByNome", query = "SELECT s FROM Setor s WHERE s.nome = :nome")})
 public class Setor implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
@@ -36,9 +46,9 @@ public class Setor implements Serializable {
     private String nome;
     @JoinColumn(name = "funcionario_id", referencedColumnName = "matricula")
     @ManyToOne(optional = false)
-    private Funcionario funcionario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "setor")
-    private List<Solicitacao> solicitacaoList;
+    private Funcionario funcionarioId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "setorId")
+    private Collection<Solicitacao> solicitacaoCollection;
 
     public Setor() {
     }
@@ -68,20 +78,21 @@ public class Setor implements Serializable {
         this.nome = nome;
     }
 
-    public Funcionario getFuncionario() {
-        return funcionario;
+    public Funcionario getFuncionarioId() {
+        return funcionarioId;
     }
 
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
+    public void setFuncionarioId(Funcionario funcionarioId) {
+        this.funcionarioId = funcionarioId;
     }
 
-    public List<Solicitacao> getSolicitacaoList() {
-        return solicitacaoList;
+    @XmlTransient
+    public Collection<Solicitacao> getSolicitacaoCollection() {
+        return solicitacaoCollection;
     }
 
-    public void setSolicitacaoList(List<Solicitacao> solicitacaoList) {
-        this.solicitacaoList = solicitacaoList;
+    public void setSolicitacaoCollection(Collection<Solicitacao> solicitacaoCollection) {
+        this.solicitacaoCollection = solicitacaoCollection;
     }
 
     @Override
@@ -106,7 +117,7 @@ public class Setor implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Setor[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Setor[ id=" + id + " ]";
     }
     
 }

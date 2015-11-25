@@ -1,8 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,12 +21,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import br.ucb.sisgese.components.NivelInstrucaoEnum;
-
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "cargo")
+@XmlRootElement
 @NamedQueries({
+    @NamedQuery(name = "Cargo.findAll", query = "SELECT c FROM Cargo c"),
     @NamedQuery(name = "Cargo.findById", query = "SELECT c FROM Cargo c WHERE c.id = :id"),
     @NamedQuery(name = "Cargo.findByNome", query = "SELECT c FROM Cargo c WHERE c.nome = :nome"),
     @NamedQuery(name = "Cargo.findByDescricao", query = "SELECT c FROM Cargo c WHERE c.descricao = :descricao")})
@@ -29,26 +40,27 @@ public class Cargo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
     @Column(name = "descricao")
     private String descricao;
-    @Column(name = "nivel_instrucao")
-    private String nivelInstrucao;
     @JoinTable(name = "cargo_tem_competencia", joinColumns = {
         @JoinColumn(name = "cargo_id", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "competencia_id", referencedColumnName = "id")})
     @ManyToMany
-    private List<Competencia> competenciaList;
-    @ManyToMany(mappedBy = "cargoList")
-    private List<Vaga> vagaList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargo")
-    private List<Funcionario> funcionarioList;
+    private Collection<Competencia> competenciaCollection;
+    @JoinTable(name = "vaga_tem_cargo", joinColumns = {
+        @JoinColumn(name = "cargo_id", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "vaga_id", referencedColumnName = "id")})
+    @ManyToMany
+    private Collection<Vaga> vagaCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargoId")
+    private Collection<Funcionario> funcionarioCollection;
 
-    
-    
     public Cargo() {
     }
 
@@ -85,36 +97,31 @@ public class Cargo implements Serializable {
         this.descricao = descricao;
     }
 
-    public String getNivelInstrucao() {
-		return nivelInstrucao;
-	}
-
-	public void setNivelInstrucao(NivelInstrucaoEnum nivelInstrucaoEnum) {
-		this.nivelInstrucao = nivelInstrucaoEnum.getNome();
-	}
-
-	public List<Competencia> getCompetenciaList() {
-        return competenciaList;
+    @XmlTransient
+    public Collection<Competencia> getCompetenciaCollection() {
+        return competenciaCollection;
     }
 
-    public void setCompetenciaList(List<Competencia> competenciaList) {
-        this.competenciaList = competenciaList;
+    public void setCompetenciaCollection(Collection<Competencia> competenciaCollection) {
+        this.competenciaCollection = competenciaCollection;
     }
 
-    public List<Vaga> getVagaList() {
-        return vagaList;
+    @XmlTransient
+    public Collection<Vaga> getVagaCollection() {
+        return vagaCollection;
     }
 
-    public void setVagaList(List<Vaga> vagaList) {
-        this.vagaList = vagaList;
+    public void setVagaCollection(Collection<Vaga> vagaCollection) {
+        this.vagaCollection = vagaCollection;
     }
 
-    public List<Funcionario> getFuncionarioList() {
-        return funcionarioList;
+    @XmlTransient
+    public Collection<Funcionario> getFuncionarioCollection() {
+        return funcionarioCollection;
     }
 
-    public void setFuncionarioList(List<Funcionario> funcionarioList) {
-        this.funcionarioList = funcionarioList;
+    public void setFuncionarioCollection(Collection<Funcionario> funcionarioCollection) {
+        this.funcionarioCollection = funcionarioCollection;
     }
 
     @Override
@@ -139,7 +146,7 @@ public class Cargo implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Cargo[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Cargo[ id=" + id + " ]";
     }
     
 }

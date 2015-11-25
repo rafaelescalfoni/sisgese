@@ -1,8 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package br.ucb.sisgese.model;
 
 import java.io.Serializable;
-import java.util.List;
-
+import java.util.Collection;
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,18 +15,22 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import br.ucb.sisgese.components.StatusVagaEnum;
-
+/**
+ *
+ * @author claudio.souza
+ */
 @Entity
 @Table(name = "vaga")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Vaga.findAll", query = "SELECT v FROM Vaga v"),
     @NamedQuery(name = "Vaga.findById", query = "SELECT v FROM Vaga v WHERE v.id = :id"),
@@ -31,27 +40,27 @@ public class Vaga implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @Basic(optional = false)
     @Column(name = "nome")
     private String nome;
+    @Basic(optional = false)
     @Column(name = "status")
     private String status;
-    @JoinTable(name = "vaga_tem_cargo", joinColumns = {
-        @JoinColumn(name = "vaga_id", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "cargo_id", referencedColumnName = "id")})
-    @ManyToMany
-    private List<Cargo> cargoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vaga")
-    private List<CandidatoSelecionado> candidatoSelecionadoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vaga")
-    private List<ProcessoSeletivo> processoSeletivoList;
+    @ManyToMany(mappedBy = "vagaCollection")
+    private Collection<Cargo> cargoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vagaId")
+    private Collection<ProcessoSeletivo> processoSeletivoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vagaId")
+    private Collection<CandidatoSelecionado> candidatoSelecionadoCollection;
     @JoinColumn(name = "solicitacao_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Solicitacao solicitacao;
+    private Solicitacao solicitacaoId;
     @JoinColumn(name = "horario_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private Horario horario;
+    private Horario horarioId;
 
     public Vaga() {
     }
@@ -86,48 +95,51 @@ public class Vaga implements Serializable {
         return status;
     }
 
-    public void setStatus(StatusVagaEnum statusEnum) {
-        this.status = statusEnum.getNome();
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public List<Cargo> getCargoList() {
-        return cargoList;
+    @XmlTransient
+    public Collection<Cargo> getCargoCollection() {
+        return cargoCollection;
     }
 
-    public void setCargoList(List<Cargo> cargoList) {
-        this.cargoList = cargoList;
+    public void setCargoCollection(Collection<Cargo> cargoCollection) {
+        this.cargoCollection = cargoCollection;
     }
 
-    public List<CandidatoSelecionado> getCandidatoSelecionadoList() {
-        return candidatoSelecionadoList;
+    @XmlTransient
+    public Collection<ProcessoSeletivo> getProcessoSeletivoCollection() {
+        return processoSeletivoCollection;
     }
 
-    public void setCandidatoSelecionadoList(List<CandidatoSelecionado> candidatoSelecionadoList) {
-        this.candidatoSelecionadoList = candidatoSelecionadoList;
+    public void setProcessoSeletivoCollection(Collection<ProcessoSeletivo> processoSeletivoCollection) {
+        this.processoSeletivoCollection = processoSeletivoCollection;
     }
 
-    public List<ProcessoSeletivo> getProcessoSeletivoList() {
-        return processoSeletivoList;
+    @XmlTransient
+    public Collection<CandidatoSelecionado> getCandidatoSelecionadoCollection() {
+        return candidatoSelecionadoCollection;
     }
 
-    public void setProcessoSeletivoList(List<ProcessoSeletivo> processoSeletivoList) {
-        this.processoSeletivoList = processoSeletivoList;
+    public void setCandidatoSelecionadoCollection(Collection<CandidatoSelecionado> candidatoSelecionadoCollection) {
+        this.candidatoSelecionadoCollection = candidatoSelecionadoCollection;
     }
 
-    public Solicitacao getSolicitacao() {
-        return solicitacao;
+    public Solicitacao getSolicitacaoId() {
+        return solicitacaoId;
     }
 
-    public void setSolicitacao(Solicitacao solicitacao) {
-        this.solicitacao = solicitacao;
+    public void setSolicitacaoId(Solicitacao solicitacaoId) {
+        this.solicitacaoId = solicitacaoId;
     }
 
-    public Horario getHorario() {
-        return horario;
+    public Horario getHorarioId() {
+        return horarioId;
     }
 
-    public void setHorario(Horario horario) {
-        this.horario = horario;
+    public void setHorarioId(Horario horarioId) {
+        this.horarioId = horarioId;
     }
 
     @Override
@@ -152,7 +164,7 @@ public class Vaga implements Serializable {
 
     @Override
     public String toString() {
-        return "br.ucb.model.Vaga[ id=" + id + " ]";
+        return "br.ucb.sisgese.model.Vaga[ id=" + id + " ]";
     }
     
 }
